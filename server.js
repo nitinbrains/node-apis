@@ -1,21 +1,25 @@
 const express = require('express');
+require('dotenv').config();
+
+const connectDB = require('./config/db');
+const addMovie = require('./controllers/addMovie');
+
 const app = express();
 
-app.listen(8000, () => {
-    console.log('Server is running on port 8000');
-});
+// Middleware
+app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('Hello World');
-});
+// DB
+connectDB();
 
-app.get('/test', (req, res) => {
-    res.send([
-        {
-            id: 1,
-            name: 'John Doe',
-            email: 'john.doe@example.com'
-        }
-    ]);
-});
+// Models
+require('./models/movies.model');
 
+// Routes
+app.post('/api/movies', addMovie);
+
+// Server
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
